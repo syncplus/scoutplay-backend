@@ -59,7 +59,8 @@ docker-compose up --build
 
 ## Docs
 
-Após subir: http://localhost:8000/scoutplay/docs
+Local: http://localhost:8000/api/docs
+Servidor: https://srv.syncplus.com.br/scoutplay/api/docs
 
 ## Migrations
 
@@ -73,4 +74,25 @@ alembic upgrade head
 ```bash
 docker build --platform linux/amd64 -t syncplus/scoutplay-backend:latest .
 docker push syncplus/scoutplay-backend:latest 
+```
+
+## Hook pos-commit
+
+Para automatizar o build e o push da imagem Docker apos cada `git commit`, instale os hooks versionados do repositorio:
+
+```bash
+./scripts/install-git-hooks.sh
+```
+
+O hook `post-commit` roda em qualquer branch e executa:
+
+```bash
+docker build --platform linux/amd64 -t syncplus/scoutplay-backend:latest .
+docker push syncplus/scoutplay-backend:latest
+```
+
+Se precisar pular essa etapa em um commit especifico:
+
+```bash
+SKIP_DOCKER_POST_COMMIT=1 git commit -m "sua mensagem"
 ```

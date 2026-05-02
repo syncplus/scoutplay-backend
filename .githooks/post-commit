@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+set -eu
+
+IMAGE_NAME="${DOCKER_IMAGE_NAME:-syncplus/scoutplay-backend:latest}"
+PLATFORM="${DOCKER_BUILD_PLATFORM:-linux/amd64}"
+
+if [ "${SKIP_DOCKER_POST_COMMIT:-0}" = "1" ]; then
+  echo "[post-commit] SKIP_DOCKER_POST_COMMIT=1, pulando build e push."
+  exit 0
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "[post-commit] docker nao encontrado, pulando build e push."
+  exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+echo "[post-commit] Buildando imagem ${IMAGE_NAME} para ${PLATFORM}..."
+docker build --platform "${PLATFORM}" -t "${IMAGE_NAME}" "${REPO_ROOT}"
+
+echo "[post-commit] Publicando imagem ${IMAGE_NAME}..."
+docker push "${IMAGE_NAME}"
+
+echo "[post-commit] Build e push finalizados com sucesso."
