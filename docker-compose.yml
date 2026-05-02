@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  scoutplay-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scoutplay-api
+    env_file:
+      - .env
+    ports:
+      - "8000:8009"
+    volumes:
+      - .:/app
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8009 --env-file .env --app-dir app
+    dns:
+      - 8.8.8.8
+      - 2001:4860:4860::8888
+    
+networks:
+  default:
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: "fd01::/80"
+
+volumes:
+  postgres_data:
