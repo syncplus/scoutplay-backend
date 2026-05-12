@@ -58,3 +58,14 @@ def get_allowed_origins() -> list[str]:
     if raw.strip() == '*':
         return ['*']
     return [origin.strip() for origin in raw.split(',')]
+
+
+def get_smtp_config() -> dict:
+    return {
+        'host':     os.environ.get('SMTP_HOST', 'smtp.gmail.com'),
+        'port':     int(os.environ.get('SMTP_PORT', '587')),
+        'user':     os.environ.get('SMTP_USER', ''),
+        'password': os.environ.get('SMTP_PASSWORD', ''),
+        'from':     os.environ.get('SMTP_FROM', os.environ.get('SMTP_USER', '')),
+        'starttls': os.environ.get('SMTP_STARTTLS', 'true').lower() == 'true',
+    }

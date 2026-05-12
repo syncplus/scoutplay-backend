@@ -42,6 +42,15 @@ def create_refresh_token(user_id: UUID) -> str:
     )
 
 
+def create_password_reset_token(user_id: UUID) -> str:
+    expire = datetime.now(timezone.utc) + timedelta(hours=1)
+    return jwt.encode(
+        {"sub": str(user_id), "type": "password_reset", "exp": expire},
+        get_secret_key(),
+        algorithm=get_algorithm(),
+    )
+
+
 def decode_token(token: str) -> dict | None:
     try:
         return jwt.decode(

@@ -1,13 +1,19 @@
+from uuid import UUID
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions import AuthException, ConflictException
-from app.models.user import User, UserRole
+from app.exceptions import AuthException, NotFoundException
+from app.models.user import User
 from app.services.utils.security import (
     create_access_token,
+    create_password_reset_token,
     create_refresh_token,
+    decode_token,
+    hash_password,
     verify_password,
 )
+from app.services.utils.email import send_password_reset_email
 
 
 class AuthService:
@@ -43,10 +49,34 @@ class AuthService:
             "role":          user.role,
         }
 
-    async def refresh(self, refresh_token: str) -> dict:
-        from app.services.utils.security import decode_token
-        from uuid import UUID
+    async def forgot_password(self, email: str) -> None:
+        result = await self.session.execute(
+            select(User).where(User.email == email.lower())
+        )
+        user = result.scalar_one_or_none()
+        # Responde sem revelar se o e-mail existe ou não
+        if not user or not user.active:
+            return
 
+        token = create_password_reset_token(user.id)
+        await send_password_reset_email(user.email, user.name, token)
+
+    async def reset_password(self, token: str, new_password: str) -> None:
+        payload = decode_token(token)
+        if not payload or payload.get("type") != "password_reset":
+            raise AuthException("Token inválido ou expirado")
+
+        result = await self.session.execute(
+            select(User).where(User.id == UUID(payload["sub"]))
+        )
+        user = result.scalar_one_or_none()
+        if not user or not user.active:
+            raise AuthException("Usuário não encontrado ou inativo")
+
+        user.password = hash_password(new_password)
+        await self.session.commit()
+
+    async def refresh(self, refresh_token: str) -> dict:
         payload = decode_token(refresh_token)
         if not payload or payload.get("type") != "refresh":
             raise AuthException("Refresh token inválido")
