@@ -7,7 +7,9 @@ from fastapi.staticfiles import StaticFiles
 
 from database import init_db
 from config import init_cache
-from controllers.database_controller import router as database_router
+from controllers.database import router as database_router
+from app.controllers.auth import router as auth_router
+from app.controllers.user import router as user_router
 
 description = """
 
@@ -51,6 +53,8 @@ init_db()
 
 # ── HTTP Routers ──────────────────────────────────────────────────
 app.include_router(database_router, prefix="/api/v1/database", tags=["Database"])
+app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
+app.include_router(user_router, prefix="/api/v1/user", tags=["User"])
 
 @app.get("/swagger", include_in_schema=False)
 async def swagger_redirect():

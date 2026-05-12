@@ -1,5 +1,6 @@
 import asyncio
 from logging.config import fileConfig
+from urllib.parse import quote_plus
 
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
@@ -7,22 +8,27 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 from app.database import Base
+from app.config import get_pg_configs
 import app.models.user
-import app.models.post
-import app.models.chat
-import app.models.notification
 
-config = context.config
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+alembic_cfg = context.config
+if alembic_cfg.config_file_name is not None:
+    fileConfig(alembic_cfg.config_file_name)
+
+pg = get_pg_configs()
+db_url = (
+    f"postgresql+asyncpg://{pg['user']}:{quote_plus(pg['pwd'])}"
+    f"@{pg['host']}:{pg['port']}/{pg['dbname']}"
+    f"?ssl={pg['sslmode']}"
+)
+alembic_cfg.set_main_option("sqlalchemy.url", db_url)
 
 target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=db_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -39,7 +45,7 @@ def do_run_migrations(connection):
 
 async def run_async_migrations():
     connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        alembic_cfg.get_section(alembic_cfg.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

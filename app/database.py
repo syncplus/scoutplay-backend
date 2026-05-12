@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, ColumnProperty
 from sqlalchemy.sql import func
 
-from config import get_db_type, get_pg_configs
+from app.config import get_db_type, get_pg_configs
 
 session_name = 'scoutplay-api'
 db_type = get_db_type()
@@ -100,3 +100,8 @@ async def get_or_create_db(existing_db: AsyncSession = None):
     else:
         async with get_db() as db:
             yield db
+
+
+async def get_session() -> AsyncSession:
+    async with AsyncSessionLocal() as session:
+        yield session
