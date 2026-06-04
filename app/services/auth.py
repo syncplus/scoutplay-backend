@@ -47,6 +47,8 @@ class AuthService:
             "name":          user.name,
             "username":      user.username,
             "role":          user.role,
+            "email":         user.email,
+            "photo":         user.photo,
         }
 
     async def forgot_password(self, email: str) -> None:

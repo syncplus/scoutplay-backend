@@ -31,6 +31,7 @@ class UserOut(BaseModel):
     email:    str
     role:     str
     active:   bool
+    photo:    str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -62,6 +63,7 @@ async def me(current_user: User = RequireAny):
         email    = current_user.email,
         role     = current_user.role,
         active   = current_user.active,
+        photo    = current_user.photo,
     )
 
 

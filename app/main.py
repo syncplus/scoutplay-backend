@@ -10,6 +10,9 @@ from config import init_cache
 from controllers.database import router as database_router
 from app.controllers.auth import router as auth_router
 from app.controllers.user import router as user_router
+from app.controllers.partida import router as partida_router
+from app.controllers.partida_set import router as partida_set_router
+from app.controllers.partida_lancamento import router as partida_lancamento_router
 
 description = """
 
@@ -55,6 +58,9 @@ init_db()
 app.include_router(database_router, prefix="/api/v1/database", tags=["Database"])
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(user_router, prefix="/api/v1/user", tags=["User"])
+app.include_router(partida_router, prefix="/api/v1/partidas", tags=["Partidas"])
+app.include_router(partida_set_router, prefix="/api/v1/partidas", tags=["Partidas - Sets"])
+app.include_router(partida_lancamento_router, prefix="/api/v1/partidas", tags=["Partidas - Lançamentos"])
 
 @app.get("/swagger", include_in_schema=False)
 async def swagger_redirect():

@@ -9,7 +9,7 @@ from alembic import context
 
 from app.database import Base
 from app.config import get_pg_configs
-import app.models.user
+import app.models  # noqa: F401  (registra User, Partida, PartidaSet, PartidaLancamento)
 
 alembic_cfg = context.config
 if alembic_cfg.config_file_name is not None:

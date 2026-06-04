@@ -21,6 +21,7 @@ class User(Base):
     username   = Column(String(50),  nullable=False, unique=True, index=True)
     email      = Column(String(255), nullable=False, unique=True, index=True)
     password   = Column(String(255), nullable=False)
+    photo      = Column(String(500), nullable=True)
     role       = Column(String(20),  nullable=False, default=UserRole.TREINADOR)
     active     = Column(Boolean,     nullable=False, default=True)
     created_at = Column(DateTime,    default=datetime.utcnow)

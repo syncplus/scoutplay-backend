@@ -40,6 +40,7 @@ AsyncSessionLocal = sessionmaker(
     autoflush=False,
     bind=engine,
     class_=AsyncSession,
+    expire_on_commit=False,   # evita reload síncrono de atributos pós-commit (MissingGreenlet) em contexto async
 )
 
 
