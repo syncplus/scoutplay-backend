@@ -50,8 +50,7 @@ cp .env.example .env
 pip install -r requirements.txt
 
 # Com SQLite (sem configurar Postgres):
-cd app
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 # Com Docker:
 docker-compose up --build

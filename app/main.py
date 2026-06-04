@@ -5,9 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from database import init_db
-from config import init_cache
-from controllers.database import router as database_router
+from app.database import init_db
+from app.config import init_cache
+from app.controllers.database import router as database_router
 from app.controllers.auth import router as auth_router
 from app.controllers.user import router as user_router
 from app.controllers.partida import router as partida_router

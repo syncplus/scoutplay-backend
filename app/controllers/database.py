@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from sqlalchemy import text
 
-from config import get_pg_configs, get_db_type
-from database import engine
+from app.config import get_pg_configs, get_db_type
+from app.database import engine
 
 router = APIRouter()
 
